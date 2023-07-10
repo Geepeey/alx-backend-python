@@ -1,8 +1,26 @@
 #!/usr/bin/env python3
+"""Asynchronous coroutine"""
+import asyncio
 import time
-from asyncio import run
-wait_n = __import__('1-concurrent_coroutines').wait_n
-"""Import wait_n"""
+from typing import List
+from random import random
+
+
+async def wait_random(max_delay: int) -> float:
+    """Return delay"""
+    delay = random() * max_delay
+    await asyncio.sleep(delay)
+    return delay
+
+
+async def wait_n(n: int, max_delay: int) -> List[float]:
+    """Coroutine with 2 int"""
+    tasks = [wait_random(max_delay) for _ in range(n)]
+    completed = []
+    for coro in asyncio.as_completed(tasks):
+        result = await coro
+        completed.append(result)
+    return completed
 
 
 def measure_time(n: int, max_delay: int) -> float:
